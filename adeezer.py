@@ -44,11 +44,21 @@ def get_tracks(item_type, item_id, file_list):
         print(u"Received status code {code} from Deezer API for url {url}".format(code=response.status_code, url=url))
         tracks = []
     data = []
+    print u"Tracks to download:"
     for item in tracks:
         if item['id'] > 0:
             # Check if file already exists
-            check_name = u"{artist} - {title} (from WWW.DEEZER.LINK).mp3".format(artist=item['artist']['name'], title=item['title'])
+            check_name = u"{artist} - {title} (from WWW.DEEZER.LINK).mp3".format(
+                artist=item['artist']['name'], title=item['title']
+            ).replace(
+                u"/", u"_"
+            ).replace(
+                u"?", u"_"
+            ).replace(
+                u'"', u"_"
+            )
             if not check_name in file_list:
+                print check_name
                 data.append([item['link'], item['artist']['name'], item['title']])
     return data
 
