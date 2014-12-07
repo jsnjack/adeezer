@@ -1,0 +1,4 @@
+progressbar2==2.7.3
+requests==2.5.0
+selenium==2.44.0
+wsgiref==0.1.2
