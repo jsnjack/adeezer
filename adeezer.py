@@ -16,6 +16,7 @@ import sys
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from selenium.common.exceptions import UnexpectedAlertPresentException, NoSuchWindowException
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
@@ -87,8 +88,11 @@ if tracks:
         driver.get("http://deezer.link/")
         driver.find_element_by_id("trackUrl").send_keys(item[0])
         driver.find_element_by_id("downloadButton").click()
-        element = WebDriverWait(driver, TIMEOUT).until(
-            EC.presence_of_element_located((By.ID, "thankspopw"))
-        )
+        try:
+            element = WebDriverWait(driver, TIMEOUT).until(
+                EC.presence_of_element_located((By.ID, "thankspopw"))
+            )
+        except (UnexpectedAlertPresentException, NoSuchWindowException):
+            print(u"Invalid track %s (%s by %s)" % (item[0], item[2], item[1]))
 
-    driver.quit()
+driver.quit()
