@@ -1,7 +1,7 @@
 adeezer
 ============
 ###What is it
-This script helps to automate downloading tracks from Deezer with http://dezeer.link
+This script helps to automate downloading tracks from Deezer with [dezeer.link](http://deezer.link/)
 
 ###How to install
 * Install Firefox browser
