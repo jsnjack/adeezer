@@ -1,3 +1,4 @@
+mutagen==1.27
 progressbar2==2.7.3
 requests==2.5.0
 selenium==2.44.0
