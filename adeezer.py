@@ -63,6 +63,30 @@ def get_tracks(item_type, item_id, file_list):
     return data
 
 
+def get_favourite_tracks(user_id):
+    """
+    Get favourites tracks of given user
+    """
+    url = "http://api.deezer.com/user/{user_id}/playlists".format(user_id=user_id)
+    response = requests.get(url)
+    playlist_id = None
+    file_list = []
+    if response.status_code == 200:
+        try:
+            playlists = json.loads(response.content)['data']
+            for item in playlists:
+                if item['is_loved_track']:
+                    playlist_id = item['id']
+                    download_dir = get_download_dir(playlist_id)
+                    file_list = os.listdir(download_dir)
+                    break
+        except KeyError:
+            print("Bad response:\n %s" % response.content)
+    else:
+        print(u"Received status code {code} from Deezer API for url {url}".format(code=response.status_code, url=url))
+    return get_tracks('playlist', playlist_id, file_list)
+
+
 def get_download_dir(item_id):
     """
     Creates download directory based on album or playlist id
@@ -81,6 +105,8 @@ if len(sys.argv) == 3:
         tracks = get_tracks('playlist', item_id, file_list)
     elif sys.argv[1] == '-a':
         tracks = get_tracks('album', item_id, file_list)
+    elif sys.argv[1] == '-f':
+        tracks = get_favourite_tracks(item_id)
 
 if tracks:
     # Configure Firefox
