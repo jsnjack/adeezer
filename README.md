@@ -27,6 +27,18 @@ To download all tracks from album run:
 ```bash
 python adeezer.py -a <album_id>
 ```
+To download all your favourite tracks:
+```bash
+python adeezer.py -f <user_id>
+```
+or
+```bash
+python adeezer.py -f <email>
+```
+or
+```bash
+python adeezer.py -f <username>
+```
 All tracks will be downloaded to `<HOME>/Downloads/<item_id>`
 
 To populate ID3 tags of the downloaded mp3 files based on their name use command:

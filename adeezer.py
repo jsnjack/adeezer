@@ -1,12 +1,4 @@
 # Automate downloading Deezer tracks with http://deezer.link
-#
-# How to use:
-#
-# - to download all tracks from album:
-#   python adeezer.py -a <album_id>
-#
-# - to download all tracks from playlist:
-#   python adeezer.py -p <playlist_id>
 
 import json
 import os
