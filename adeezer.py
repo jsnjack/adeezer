@@ -50,6 +50,8 @@ def get_tracks(item_type, item_id):
                 u"?", u"_"
             ).replace(
                 u'"', u"_"
+            ).replace(
+                u"*", u"_"
             )
             if not check_name in file_list:
                 print check_name
