@@ -109,7 +109,7 @@ def get_download_dir(item_id):
     """
     Creates download directory based on album or playlist id
     """
-    download_dir = os.path.expanduser('~') + u'/Downloads/' + str(item_id)
+    download_dir = os.path.join(os.path.expanduser('~'),'Downloads', str(item_id))
     if not os.path.isdir(download_dir):
         os.makedirs(download_dir)
     return download_dir
