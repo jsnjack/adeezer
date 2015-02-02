@@ -5,6 +5,7 @@ import os
 import progressbar
 import requests
 import sys
+import time
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -147,4 +148,6 @@ if tracks:
         except (UnexpectedAlertPresentException, NoSuchWindowException):
             print(u"Invalid track %s (%s by %s)" % (item[0], item[2], item[1]))
 
+    # Increase it if firefox closes before saving the last downloaded track
+    time.sleep(2)
     driver.quit()
