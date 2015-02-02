@@ -38,7 +38,7 @@ def get_tracks(item_type, item_id):
     data = []
     print u"Tracks to download:"
     download_dir = get_download_dir(item_id)
-    file_list = os.listdir(download_dir)
+    file_list = [x.decode("utf-8") for x in os.listdir(download_dir)]
     for item in tracks:
         if item['id'] > 0:
             # Check if file already exists
