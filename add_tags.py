@@ -7,7 +7,7 @@ import progressbar
 import sys
 
 from mutagen.id3 import TIT2, TALB, TPE1, TPE2
-from mutagen.mp3 import MP3
+from mutagen.mp3 import MP3, HeaderNotFoundError
 
 
 download_folder = sys.argv[1]
@@ -27,11 +27,14 @@ if os.path.exists(download_folder):
     pbar = progressbar.ProgressBar()
     for item in pbar(file_list):
         if item.split(".")[-1] == u"mp3":
-            artist, title = get_tags(item)
-            audio_file = MP3(download_folder + u'/' + item.decode("utf-8"))
-            audio_file["TIT2"] = TIT2(encoding=3, text=title)
-            audio_file["TPE1"] = TPE1(encoding=3, text=artist)
-            audio_file["TALB"] = TALB(encoding=3, text=album_name)
-            audio_file["TPE2"] = TPE2(encoding=3, text=album_name)
-            audio_file.save()
+            try:
+                artist, title = get_tags(item)
+                audio_file = MP3(download_folder + u'/' + item.decode("utf-8"))
+                audio_file["TIT2"] = TIT2(encoding=3, text=title)
+                audio_file["TPE1"] = TPE1(encoding=3, text=artist)
+                audio_file["TALB"] = TALB(encoding=3, text=album_name)
+                audio_file["TPE2"] = TPE2(encoding=3, text=album_name)
+                audio_file.save()
+            except HeaderNotFoundError:
+                print u"Error during adding tags to %s" % item
 
