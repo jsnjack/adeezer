@@ -16,6 +16,9 @@ from selenium.webdriver.support import expected_conditions as EC
 
 # Time to wait for file download
 TIMEOUT = 200
+# Time to wait between startig to download next track
+# Consider increasing it if you browser doesn't have enough time to save the file
+TRACK_TIMEOUT = 5
 
 tracks = None
 
@@ -54,7 +57,7 @@ def get_tracks(item_type, item_id):
             ).replace(
                 u"*", u"_"
             )
-            if not check_name in file_list:
+            if check_name not in file_list:
                 print check_name
                 data.append([item['link'], item['artist']['name'], item['title']])
     return data, download_dir
@@ -147,7 +150,6 @@ if tracks:
             )
         except (UnexpectedAlertPresentException, NoSuchWindowException):
             print(u"Invalid track %s (%s by %s)" % (item[0], item[2], item[1]))
-
-    # Increase it if firefox closes before saving the last downloaded track
-    time.sleep(2)
+        finally:
+            time.sleep(TRACK_TIMEOUT)
     driver.quit()
