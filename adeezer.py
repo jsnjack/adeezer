@@ -22,6 +22,11 @@ TRACK_TIMEOUT = 5
 
 tracks = None
 
+# Fix encode error on Windows issue #3
+if os.name == "nt":
+    import codecs
+    sys.stdout = codecs.getwriter("iso-8859-1")(sys.stdout, 'xmlcharrefreplace')
+
 
 def get_tracks(item_type, item_id):
     """
