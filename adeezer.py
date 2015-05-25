@@ -75,7 +75,7 @@ def get_favourite_tracks(user_id):
     try:
         user_id = int(user_id)
     except ValueError:
-        user_id = get_user_id_by_email(user_id)
+        print(u"User id should be a number")
     url = "http://api.deezer.com/user/{user_id}/playlists".format(user_id=user_id)
     response = requests.get(url)
     playlist_id = None
@@ -91,27 +91,6 @@ def get_favourite_tracks(user_id):
     else:
         print(u"Received status code {code} from Deezer API for url {url}".format(code=response.status_code, url=url))
     return get_tracks('playlist', playlist_id)
-
-
-def get_user_id_by_email(email):
-    """
-    Gets user id by email or username
-    """
-    user_id = None
-    url = "http://api.deezer.com/search/user?q={email}".format(email=email)
-    response = requests.get(url)
-    if response.status_code == 200:
-        try:
-            data = json.loads(response.content)
-            if data['total'] != 1:
-                print(u"Found more than one result for email {email}".format(email=email))
-            else:
-                user_id = data['data'][0]['id']
-        except KeyError:
-            print("Bad response:\n %s" % response.content)
-    else:
-        print(u"Received status code {code} from Deezer API for url {url}".format(code=response.status_code, url=url))
-    return user_id
 
 
 def get_download_dir(item_id):
