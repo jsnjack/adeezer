@@ -17,6 +17,9 @@ source ./env/bin/activate
 ```bash
 pip install -r requirements.txt
 ```
+* Install Xvfb server (Linux only)
+ * Fedora: `sudo dnf install xorg-x11-server-Xvfb`
+ * Ubuntu: `sudo apt-get install xvfb`
 
 ###How to use
 To download all tracks from playlist run:
@@ -37,4 +40,9 @@ All tracks will be downloaded to `<HOME>/Downloads/<item_id>`
 To populate ID3 tags of the downloaded mp3 files based on their name use command:
 ```bash
 python add_tags.py <path_to_folder> "<album_name>"
+```
+
+By default in Linux downloading will start in headless mode. To disable headless mode pass `--show_browser` as last argument for the adeezer script.
+```bash
+python adeezer.py -p <playlist_id> --show_browser
 ```
