@@ -1,5 +1,6 @@
 mutagen==1.29
 progressbar2==2.7.3
 requests==2.7.0
-selenium==2.45.0
+selenium==2.46.0
 wsgiref==0.1.2
+xvfbwrapper==0.2.4

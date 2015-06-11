@@ -20,6 +20,9 @@ TIMEOUT = 200
 # Consider increasing it if you browser doesn't have enough time to save the file
 TRACK_TIMEOUT = 5
 
+# Enable headles mode (Linux only)
+HEADLESS = True
+
 tracks = None
 
 # Fix encode error on Windows issue #3
@@ -102,8 +105,7 @@ def get_download_dir(item_id):
         os.makedirs(download_dir)
     return download_dir
 
-
-if len(sys.argv) == 3:
+if len(sys.argv):
     item_id = sys.argv[2]
     if sys.argv[1] == '-p':
         tracks, download_dir = get_tracks('playlist', item_id)
@@ -111,8 +113,15 @@ if len(sys.argv) == 3:
         tracks, download_dir = get_tracks('album', item_id,)
     elif sys.argv[1] == '-f':
         tracks, download_dir = get_favourite_tracks(item_id)
+    if "--show_browser" in sys.argv:
+        HEADLESS = False
 
 if tracks:
+    if os.name == "posix" and HEADLESS:
+        from xvfbwrapper import Xvfb
+        xvfb = Xvfb(width=1280, height=720)
+        xvfb.start()
+
     # Configure Firefox
     fp = webdriver.FirefoxProfile()
     fp.add_extension(extension='adblock.xpi')
@@ -137,3 +146,5 @@ if tracks:
         finally:
             time.sleep(TRACK_TIMEOUT)
     driver.quit()
+    if os.name == "posix" and HEADLESS:
+        xvfb.stop()
