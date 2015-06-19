@@ -1,5 +1,6 @@
 # Automate downloading Deezer tracks with http://deezer.link
 
+import argparse
 import json
 import os
 import progressbar
@@ -20,10 +21,6 @@ TIMEOUT = 200
 # Consider increasing it if you browser doesn't have enough time to save the file
 TRACK_TIMEOUT = 5
 
-# Enable headles mode (Linux only)
-HEADLESS = True
-
-tracks = None
 
 # Fix encode error on Windows issue #3
 if os.name == "nt":
@@ -105,19 +102,12 @@ def get_download_dir(item_id):
         os.makedirs(download_dir)
     return download_dir
 
-if len(sys.argv):
-    item_id = sys.argv[2]
-    if sys.argv[1] == '-p':
-        tracks, download_dir = get_tracks('playlist', item_id)
-    elif sys.argv[1] == '-a':
-        tracks, download_dir = get_tracks('album', item_id,)
-    elif sys.argv[1] == '-f':
-        tracks, download_dir = get_favourite_tracks(item_id)
-    if "--show_browser" in sys.argv:
-        HEADLESS = False
 
-if tracks:
-    if os.name == "posix" and HEADLESS:
+def download(tracks, download_dir, headless):
+    """
+    Download tracks
+    """
+    if os.name == "posix" and headless:
         from xvfbwrapper import Xvfb
         xvfb = Xvfb(width=1280, height=720)
         xvfb.start()
@@ -138,7 +128,7 @@ if tracks:
         driver.find_element_by_id("trackUrl").send_keys(item[0])
         driver.find_element_by_id("downloadButton").click()
         try:
-            element = WebDriverWait(driver, TIMEOUT).until(
+            WebDriverWait(driver, TIMEOUT).until(
                 EC.presence_of_element_located((By.ID, "thankspopw"))
             )
         except (UnexpectedAlertPresentException, NoSuchWindowException):
@@ -146,5 +136,51 @@ if tracks:
         finally:
             time.sleep(TRACK_TIMEOUT)
     driver.quit()
-    if os.name == "posix" and HEADLESS:
+    if os.name == "posix" and headless:
         xvfb.stop()
+
+
+def get_args():
+    """
+    Parse provided arguments
+    """
+    parser = argparse.ArgumentParser(description=u"Automate downloading tracks from deezer")
+
+    parser.add_argument("-a", "--album", help=u"Download album with provided id")
+    parser.add_argument("-p", "--playlist", help=u"Download playlist with provided id")
+    parser.add_argument("-f", "--favourite", help=u"Download favourite playlist of user with provided id")
+    parser.add_argument(
+        "--show", dest="headless", default=True, action="store_false",
+        help="Show browser window"
+    )
+
+    args = parser.parse_args()
+
+    if not args.album or not args.playlist or not args.favourite:
+        print u"Provide album id, playlist id, or user id"
+
+    return args
+
+
+def main():
+    """
+    Parse arguments and start downloading tracks
+    """
+    tracks = None
+    download_dir = None
+
+    args = get_args()
+
+    if args.playlist:
+        tracks, download_dir = get_tracks('playlist', args.playlist)
+    elif args.album:
+        tracks, download_dir = get_tracks('album', args.album,)
+    elif args.favourite:
+        tracks, download_dir = get_favourite_tracks(args.favourite)
+
+    if tracks and download_dir:
+        download(tracks, download_dir, args.headless)
+
+
+if __name__ == "__main__":
+    main()
