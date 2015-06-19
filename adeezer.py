@@ -9,7 +9,11 @@ import time
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.common.exceptions import UnexpectedAlertPresentException, NoSuchWindowException
+from selenium.common.exceptions import (
+    UnexpectedAlertPresentException,
+    NoSuchWindowException,
+    TimeoutException
+)
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
@@ -19,6 +23,9 @@ TIMEOUT = 200
 # Time to wait between startig to download next track
 # Consider increasing it if you browser doesn't have enough time to save the file
 TRACK_TIMEOUT = 5
+# Sometimes one of the google scripts takes to much time to load, download process
+# can be started without it
+PAGE_LOAD_TIMEOUT = 10
 
 # Enable headles mode (Linux only)
 HEADLESS = True
@@ -134,7 +141,11 @@ if tracks:
 
     pbar = progressbar.ProgressBar()
     for item in pbar(tracks):
-        driver.get("http://deezer.link/")
+        driver.set_page_load_timeout(PAGE_LOAD_TIMEOUT)
+        try:
+            driver.get("http://deezer.link/")
+        except TimeoutException:
+            pass
         driver.find_element_by_id("trackUrl").send_keys(item[0])
         driver.find_element_by_id("downloadButton").click()
         try:
