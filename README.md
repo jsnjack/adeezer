@@ -1,5 +1,7 @@
 adeezer
 ============
+###deezer.link requires subscription to download tracks. This script doesn't work anymore
+***
 ###What is it
 This script helps to automate downloading tracks from Deezer with [dezeer.link](http://deezer.link/)
 
